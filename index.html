@@ -1,0 +1,1515 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="SCREENLINK PRO - مشاركة الشاشة بأمان">
+    <title>SCREENLINK PRO | مشاركة الشاشة</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-primary: #0b0f19;
+            --bg-secondary: #111827;
+            --bg-glass: rgba(17, 24, 39, 0.7);
+            --bg-glass-hover: rgba(31, 41, 55, 0.8);
+            --border-glass: rgba(255, 255, 255, 0.08);
+            --border-glass-active: rgba(6, 182, 212, 0.5);
+            
+            --primary: #06b6d4;
+            --primary-glow: rgba(6, 182, 212, 0.4);
+            --secondary: #8b5cf6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            
+            --text-primary: #f9fafb;
+            --text-secondary: #9ca3af;
+            --text-muted: #6b7280;
+            
+            --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+            --shadow-glow: 0 0 20px var(--primary-glow);            
+            --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-base: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            font-size: 16px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-primary);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(6, 182, 212, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 40%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.5;
+        }
+
+        .glass {
+            background: var(--bg-glass);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-glass);
+            box-shadow: var(--shadow-md);
+        }
+
+        .glass-hover:hover {
+            background: var(--bg-glass-hover);
+            border-color: var(--border-glass-active);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .items-center { align-items: center; }
+        .justify-center { justify-content: center; }
+        .justify-between { justify-content: space-between; }
+        .gap-2 { gap: 0.5rem; }
+        .gap-4 { gap: 1rem; }
+        .hidden { display: none !important; }
+        .w-full { width: 100%; }
+        .h-full { height: 100%; }
+        .text-center { text-align: center; }
+        .font-mono { font-family: var(--font-mono); }
+        .text-sm { font-size: 0.875rem; }
+        .text-xs { font-size: 0.75rem; }        .text-primary { color: var(--primary); }
+        .text-secondary { color: var(--text-secondary); }
+        .font-semibold { font-weight: 600; }
+        .mt-2 { margin-top: 0.5rem; }
+        .mt-4 { margin-top: 1rem; }
+        .mb-2 { margin-bottom: 0.5rem; }
+        .mb-4 { margin-bottom: 1rem; }
+        .p-4 { padding: 1rem; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 5px var(--primary-glow); }
+            50% { box-shadow: 0 0 20px var(--primary-glow), 0 0 40px var(--primary-glow); }
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .animate-fade-in { animation: fadeIn 0.4s var(--transition-base) forwards; }
+        .animate-pulse-glow { animation: pulse-glow 2s infinite; }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-md);
+            font-weight: 500;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            border: 1px solid transparent;
+            outline: none;
+            position: relative;
+            overflow: hidden;
+            font-family: var(--font-sans);
+        }
+
+        .btn:focus-visible {            ring: 2px solid var(--primary);
+            ring-offset: 2px;
+            ring-offset-color: var(--bg-primary);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), #0891b2);
+            color: white;
+            box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(6, 182, 212, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-glass);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--primary);
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: var(--danger);
+        }
+
+        .btn-danger:hover {
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        .btn-icon {
+            padding: 0.75rem;
+            border-radius: 50%;
+            aspect-ratio: 1;
+        }
+
+        .input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);            font-family: var(--font-sans);
+            font-size: 0.875rem;
+            transition: all var(--transition-fast);
+        }
+
+        .input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+        }
+
+        .input::placeholder {
+            color: var(--text-muted);
+        }
+
+        #app {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #landing-view {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .logo-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            box-shadow: var(--shadow-glow);
+            font-size: 2rem;
+        }
+
+        .logo-text {            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            background: linear-gradient(to right, var(--text-primary), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-subtitle {
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+            font-size: 1.125rem;
+        }
+
+        .room-card {
+            width: 100%;
+            max-width: 480px;
+            padding: 2rem;
+            border-radius: var(--radius-xl);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 0.25rem;
+            border-radius: var(--radius-md);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 0.5rem;
+            text-align: center;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            transition: all var(--transition-fast);
+        }
+
+        .tab.active {
+            background: var(--bg-glass-hover);
+            color: var(--text-primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        #room-view {
+            flex: 1;            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .room-header {
+            height: 64px;
+            padding: 0 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-glass);
+            z-index: 10;
+        }
+
+        .room-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0.75rem;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--success);
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse-glow 2s infinite;
+        }
+
+        .room-main {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+            position: relative;
+        }
+        .video-stage {
+            flex: 1;
+            position: relative;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        #main-video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: #000;
+        }
+
+        #local-preview {
+            position: absolute;
+            bottom: 100px;
+            right: 20px;
+            width: 240px;
+            height: 135px;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            border: 2px solid var(--border-glass);
+            box-shadow: var(--shadow-lg);
+            background: #111;
+            z-index: 5;
+            transition: all var(--transition-base);
+        }
+
+        #local-preview video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        #local-preview:hover {
+            transform: scale(1.05);
+            border-color: var(--primary);
+        }
+
+        .controls-bar {
+            height: 80px;
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;            border-top: 1px solid var(--border-glass);
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
+            z-index: 10;
+        }
+
+        .control-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-glass);
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            position: relative;
+        }
+
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .control-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        .control-btn.danger {
+            background: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+
+        .control-btn.danger:hover {
+            background: #dc2626;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+        }
+
+        .control-btn[disabled] {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .spinner {            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity var(--transition-base);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal {
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            transform: scale(0.95);
+            transition: transform var(--transition-base);
+        }
+
+        .modal-overlay.active .modal {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        #toast-container {
+            position: fixed;
+            top: 1.5rem;
+            right: 1.5rem;
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .toast {
+            padding: 1rem 1.5rem;
+            background: var(--bg-glass);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-glass);
+            border-left: 4px solid var(--primary);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            min-width: 300px;
+            animation: slideInRight 0.3s ease;
+        }
+
+        .toast.success { border-left-color: var(--success); }
+        .toast.error { border-left-color: var(--danger); }
+        .toast.warning { border-left-color: var(--warning); }
+
+        .qr-container {
+            width: 200px;
+            height: 200px;
+            background: white;
+            border-radius: var(--radius-md);
+            margin: 1rem auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .qr-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        .e2ee-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.75rem;
+            color: var(--success);
+            background: rgba(16, 185, 129, 0.1);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .quality-badge {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            padding: 0.25rem 0.75rem;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            font-family: var(--font-mono);
+            color: var(--primary);
+            z-index: 5;
+        }
+
+        .info-box {
+            padding: 1rem;
+            background: rgba(6, 182, 212, 0.1);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            border-radius: var(--radius-md);
+            margin-bottom: 1rem;
+        }
+
+        .info-box h4 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .info-box p {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .waiting-message {            text-align: center;
+            padding: 2rem;
+        }
+
+        .waiting-message .spinner {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 1rem;
+        }
+
+        @media (max-width: 768px) {
+            #local-preview {
+                width: 120px;
+                height: 67px;
+                bottom: 90px;
+                right: 10px;
+            }
+            
+            .controls-bar {
+                padding: 0 1rem;
+                gap: 0.5rem;
+                overflow-x: auto;
+            }
+            
+            .control-btn {
+                width: 40px;
+                height: 40px;
+                flex-shrink: 0;
+            }
+
+            .logo-text {
+                font-size: 2rem;
+            }
+
+            .room-card {
+                padding: 1.5rem;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <div id="toast-container"></div>
+
+    <!-- Landing View -->
+    <div id="landing-view" class="animate-fade-in">
+        <div class="logo-container">
+            <div class="logo-icon">🔗</div>
+            <h1 class="logo-text">SCREENLINK PRO</h1>
+            <p class="logo-subtitle">مشاركة الشاشة بأمان</p>
+        </div>
+
+        <div class="room-card glass">
+            <div class="tabs">
+                <div class="tab active" onclick="app.switchTab('create')">إنشاء غرفة</div>
+                <div class="tab" onclick="app.switchTab('join')">انضمام لغرفة</div>
+            </div>
+
+            <!-- Create Room Form -->
+            <div id="create-room-form">
+                <div class="info-box">
+                    <h4>📱 ملاحظة مهمة للهواتف</h4>
+                    <p>
+                        <strong>Android:</strong> يمكنك مشاركة الشاشة مباشرة<br>
+                        <strong>iPhone:</strong> استخدم الكاميرا بدلاً من مشاركة الشاشة (iOS لا يدعم مشاركة الشاشة من المتصفح)
+                    </p>
+                </div>
+
+                <div class="flex flex-col gap-4">
+                    <div>
+                        <label class="text-sm text-secondary block mb-2">اسم الغرفة (اختياري)</label>
+                        <input type="text" id="room-name" class="input" placeholder="جلسة آمنة">
+                    </div>
+                    <button class="btn btn-primary w-full" onclick="app.createRoom()">
+                        <span>إنشاء غرفة آمنة</span>
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Join Room Form -->            <div id="join-room-form" class="hidden">
+                <div class="flex flex-col gap-4">
+                    <div>
+                        <label class="text-sm text-secondary block mb-2">معرف الغرفة</label>
+                        <input type="text" id="join-room-id" class="input" placeholder="مثال: 8f3a-9b2c" dir="ltr">
+                    </div>
+                    <button class="btn btn-primary w-full" onclick="app.joinRoom()">
+                        <span>انضمام آمن</span>
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="mt-4 pt-4" style="border-top: 1px solid rgba(255,255,255,0.1);">
+                <div class="flex items-center justify-center gap-2 text-xs" style="color: var(--text-muted);">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--success);"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                    <span>مشفر من الطرف إلى الطرف • بدون خادم مركزي</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Room View -->
+    <div id="room-view" class="hidden">
+        <header class="room-header glass">
+            <div class="room-info">
+                <div class="logo-icon" style="width: 32px; height: 32px; font-size: 1rem; margin: 0;">🔗</div>
+                <div>
+                    <div class="font-semibold text-sm" id="display-room-name">غرفة آمنة</div>
+                    <div class="text-xs text-secondary flex items-center gap-2">
+                        <span id="session-timer">00:00</span>
+                        <span class="e2ee-badge">
+                            <svg width="10" height="10" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/></svg>
+                            E2EE
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-2">
+                <button class="btn btn-secondary btn-icon" onclick="app.toggleSidebar()" title="معلومات الاتصال">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </button>
+            </div>
+        </header>
+
+        <div class="room-main">
+            <div class="video-stage" id="video-stage">
+                <div class="quality-badge" id="quality-badge">جاري الاتصال...</div>
+                <video id="main-video" autoplay playsinline></video>                
+                <div id="local-preview" class="hidden">
+                    <video id="local-video" autoplay playsinline muted></video>
+                </div>
+
+                <div id="connection-overlay" class="hidden" style="position: absolute; inset: 0; background: rgba(0,0,0,0.8); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 20;">
+                    <div class="spinner mb-4"></div>
+                    <div class="text-primary font-semibold">جاري إنشاء اتصال آمن...</div>
+                    <div class="text-xs text-secondary mt-2" id="connection-status">انتظار المشارك الآخر</div>
+                </div>
+
+                <div id="waiting-overlay" class="hidden" style="position: absolute; inset: 0; background: rgba(0,0,0,0.9); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 20;">
+                    <div class="waiting-message">
+                        <div class="spinner"></div>
+                        <div class="text-primary font-semibold text-lg mb-2">في انتظار انضمام شخص آخر...</div>
+                        <div class="text-xs text-secondary">شارك الرابط مع الشخص الآخر</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls-bar">
+            <button class="control-btn" id="btn-mic" onclick="app.toggleMic()" title="الميكروفون">
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+            </button>
+            
+            <button class="control-btn" id="btn-screen" onclick="app.toggleScreenShare()" title="مشاركة الشاشة">
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            </button>
+
+            <button class="control-btn" id="btn-camera" onclick="app.toggleCamera()" title="الكاميرا">
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            </button>
+            
+            <button class="control-btn" onclick="app.toggleFullscreen()" title="ملء الشاشة">
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
+            </button>
+            
+            <div style="width: 1px; height: 24px; background: var(--border-glass); margin: 0 0.5rem;"></div>
+            
+            <button class="control-btn danger" onclick="app.leaveRoom()" title="مغادرة">
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Invite Modal -->
+    <div class="modal-overlay" id="invite-modal">
+        <div class="modal glass">
+            <div class="modal-header">                <h3 class="modal-title">دعوة المشاركين</h3>
+                <button class="btn btn-secondary btn-icon" onclick="app.closeModal('invite-modal')">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            
+            <div class="text-center mb-4">
+                <div class="qr-container">
+                    <img id="qr-code-img" src="" alt="QR Code">
+                </div>
+                <p class="text-sm text-secondary">امسح الرمز للانضمام فوراً</p>
+            </div>
+            
+            <div class="flex flex-col gap-3">
+                <div class="flex gap-2">
+                    <input type="text" id="invite-link" class="input font-mono text-sm" readonly dir="ltr">
+                    <button class="btn btn-primary" onclick="app.copyInviteLink()">نسخ</button>
+                </div>
+                <div class="text-xs text-center" style="color: var(--text-muted);">
+                    معرف الغرفة: <span id="modal-room-id" class="font-mono text-primary" dir="ltr"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Info Sidebar Modal -->
+    <div class="modal-overlay" id="info-modal">
+        <div class="modal glass">
+            <div class="modal-header">
+                <h3 class="modal-title">معلومات الاتصال</h3>
+                <button class="btn btn-secondary btn-icon" onclick="app.closeModal('info-modal')">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div id="info-content">
+                <div class="info-box">
+                    <h4>حالة الاتصال</h4>
+                    <p id="connection-info">جاري الاتصال...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
+<script>
+/** * SCREENLINK PRO - Fixed Version with Firebase
+ * يعمل فعلاً لمشاركة الشاشة من الهاتف إلى الكمبيوتر
+ */
+
+// ==========================================
+// Firebase Configuration
+// ==========================================
+// IMPORTANT: Replace with your own Firebase config
+// 1. Go to https://console.firebase.google.com/
+// 2. Create a new project (free)
+// 3. Go to "Realtime Database" and create one
+// 4. Set rules to: { "rules": { ".read": true, ".write": true } }
+// 5. Copy your config here
+const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+    projectId: "YOUR_PROJECT",
+    storageBucket: "YOUR_PROJECT.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// ==========================================
+// UTILITIES
+// ==========================================
+const Utils = {
+    generateRoomId: () => {
+        const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+        let result = '';
+        for (let i = 0; i < 8; i++) {
+            result += chars.charAt(Math.floor(Math.random() * chars.length));
+            if (i === 3) result += '-';
+        }
+        return result;
+    },
+    
+    formatTime: (seconds) => {
+        const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+        const secs = (seconds % 60).toString().padStart(2, '0');
+        return `${mins}:${secs}`;
+    },
+
+    copyToClipboard: (text) => {
+        navigator.clipboard.writeText(text).then(() => {
+            app.showToast('تم النسخ', 'success');        }).catch(() => {
+            // Fallback for older browsers
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            app.showToast('تم النسخ', 'success');
+        });
+    },
+
+    isMobile: () => {
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    },
+
+    isIOS: () => {
+        return /iPad|iPhone|iPod/.test(navigator.userAgent);
+    }
+};
+
+// ==========================================
+// WEBRTC MANAGER
+// ==========================================
+class WebRTCManager {
+    constructor() {
+        this.pc = null;
+        this.localStream = null;
+        this.screenStream = null;
+        this.cameraStream = null;
+        this.dataChannel = null;
+        this.isInitiator = false;
+        this.onMessage = null;
+        this.onConnectionChange = null;
+        this.onTrack = null;
+        
+        this.iceServers = {
+            iceServers: [
+                { urls: 'stun:stun.l.google.com:19302' },
+                { urls: 'stun:stun1.l.google.com:19302' },
+                { urls: 'stun:stun2.l.google.com:19302' }
+            ]
+        };
+    }
+
+    async initLocalMedia(withCamera = false) {
+        try {
+            const constraints = {
+                audio: {
+                    echoCancellation: true,                    noiseSuppression: true,
+                    autoGainControl: true
+                },
+                video: withCamera
+            };
+            
+            this.localStream = await navigator.mediaDevices.getUserMedia(constraints);
+            return this.localStream;
+        } catch (err) {
+            console.error('Media access error:', err);
+            throw err;
+        }
+    }
+
+    async startScreenShare() {
+        try {
+            this.screenStream = await navigator.mediaDevices.getDisplayMedia({
+                video: {
+                    cursor: "always",
+                    displaySurface: "monitor"
+                },
+                audio: true
+            });
+            
+            this.screenStream.getVideoTracks()[0].onended = () => {
+                this.stopScreenShare();
+            };
+            
+            return this.screenStream;
+        } catch (err) {
+            console.error('Screen share error:', err);
+            return null;
+        }
+    }
+
+    stopScreenShare() {
+        if (this.screenStream) {
+            this.screenStream.getTracks().forEach(track => track.stop());
+            this.screenStream = null;
+        }
+    }
+
+    async startCamera() {
+        try {
+            this.cameraStream = await navigator.mediaDevices.getUserMedia({
+                video: { facingMode: 'environment' },
+                audio: false
+            });
+            return this.cameraStream;
+        } catch (err) {            console.error('Camera error:', err);
+            return null;
+        }
+    }
+
+    stopCamera() {
+        if (this.cameraStream) {
+            this.cameraStream.getTracks().forEach(track => track.stop());
+            this.cameraStream = null;
+        }
+    }
+
+    createPeerConnection(isInitiator) {
+        this.isInitiator = isInitiator;
+        this.pc = new RTCPeerConnection(this.iceServers);
+
+        // Add local tracks
+        if (this.localStream) {
+            this.localStream.getTracks().forEach(track => {
+                this.pc.addTrack(track, this.localStream);
+            });
+        }
+
+        // Handle ICE candidates - send via Firebase
+        this.pc.onicecandidate = (event) => {
+            if (event.candidate && app.roomId) {
+                const candidateData = {
+                    type: 'candidate',
+                    candidate: event.candidate,
+                    sender: app.userId,
+                    timestamp: firebase.database.ServerValue.TIMESTAMP
+                };
+                db.ref(`rooms/${app.roomId}/candidates`).push(candidateData);
+            }
+        };
+
+        // Handle remote stream
+        this.pc.ontrack = (event) => {
+            if (this.onTrack) {
+                this.onTrack(event.streams[0]);
+            }
+        };
+
+        // Handle connection state
+        this.pc.onconnectionstatechange = () => {
+            if (this.onConnectionChange) {
+                this.onConnectionChange(this.pc.connectionState);
+            }
+        };
+        // Handle negotiation needed (for adding/removing tracks)
+        this.pc.onnegotiationneeded = async () => {
+            if (this.isInitiator) {
+                try {
+                    const offer = await this.pc.createOffer();
+                    await this.pc.setLocalDescription(offer);
+                    
+                    // Wait for ICE gathering
+                    await this.waitForIceGathering();
+                    
+                    db.ref(`rooms/${app.roomId}/offer`).set({
+                        type: 'offer',
+                        sdp: this.pc.localDescription,
+                        sender: app.userId,
+                        timestamp: firebase.database.ServerValue.TIMESTAMP
+                    });
+                } catch (err) {
+                    console.error('Renegotiation error:', err);
+                }
+            }
+        };
+
+        // Setup Data Channel
+        if (this.isInitiator) {
+            this.dataChannel = this.pc.createDataChannel('chat', { ordered: true });
+            this.setupDataChannel();
+        } else {
+            this.pc.ondatachannel = (event) => {
+                this.dataChannel = event.channel;
+                this.setupDataChannel();
+            };
+        }
+
+        return this.pc;
+    }
+
+    async waitForIceGathering() {
+        return new Promise((resolve) => {
+            if (this.pc.iceGatheringState === 'complete') {
+                resolve();
+            } else {
+                const checkState = () => {
+                    if (this.pc.iceGatheringState === 'complete') {
+                        this.pc.removeEventListener('icegatheringstatechange', checkState);
+                        resolve();
+                    }
+                };
+                this.pc.addEventListener('icegatheringstatechange', checkState);
+                // Timeout after 5 seconds
+                setTimeout(resolve, 5000);            }
+        });
+    }
+
+    setupDataChannel() {
+        this.dataChannel.onopen = () => {
+            console.log('Data channel opened');
+            app.showToast('تم إنشاء قناة محادثة آمنة', 'success');
+        };
+        
+        this.dataChannel.onmessage = (event) => {
+            if (this.onMessage) {
+                this.onMessage(JSON.parse(event.data));
+            }
+        };
+    }
+
+    async createOffer() {
+        const offer = await this.pc.createOffer();
+        await this.pc.setLocalDescription(offer);
+        
+        await this.waitForIceGathering();
+        
+        return this.pc.localDescription;
+    }
+
+    async setRemoteOffer(offer) {
+        await this.pc.setRemoteDescription(new RTCSessionDescription(offer));
+        const answer = await this.pc.createAnswer();
+        await this.pc.setLocalDescription(answer);
+        
+        await this.waitForIceGathering();
+        
+        return this.pc.localDescription;
+    }
+
+    async setRemoteAnswer(answer) {
+        await this.pc.setRemoteDescription(new RTCSessionDescription(answer));
+    }
+
+    async addCandidate(candidate) {
+        try {
+            await this.pc.addIceCandidate(new RTCIceCandidate(candidate));
+        } catch (err) {
+            console.error('Error adding candidate:', err);
+        }
+    }
+
+    sendMessage(data) {
+        if (this.dataChannel && this.dataChannel.readyState === 'open') {            this.dataChannel.send(JSON.stringify(data));
+        }
+    }
+
+    async replaceTrack(newStream, kind) {
+        const sender = this.pc.getSenders().find(s => s.track && s.track.kind === kind);
+        if (sender && newStream) {
+            const newTrack = newStream.getTracks().find(t => t.kind === kind);
+            if (newTrack) {
+                await sender.replaceTrack(newTrack);
+            }
+        }
+    }
+
+    cleanup() {
+        if (this.screenStream) this.stopScreenShare();
+        if (this.cameraStream) this.stopCamera();
+        if (this.localStream) {
+            this.localStream.getTracks().forEach(track => track.stop());
+        }
+        if (this.pc) {
+            this.pc.close();
+        }
+    }
+}
+
+// ==========================================
+// MAIN APPLICATION
+// ==========================================
+class App {
+    constructor() {
+        this.webrtc = new WebRTCManager();
+        this.roomId = null;
+        this.userId = Utils.generateRoomId();
+        this.sessionStartTime = null;
+        this.timerInterval = null;
+        this.isMicMuted = false;
+        this.isScreenSharing = false;
+        this.isCameraOn = false;
+        this.roomRef = null;
+        this.candidatesListener = null;
+        
+        this.init();
+    }
+
+    init() {
+        // Check for URL params
+        const urlParams = new URLSearchParams(window.location.search);
+        const roomParam = urlParams.get('room');
+                if (roomParam) {
+            document.getElementById('join-room-id').value = roomParam;
+            this.switchTab('join');
+        }
+    }
+
+    switchTab(tab) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        event.target.classList.add('active');
+        
+        if (tab === 'create') {
+            document.getElementById('create-room-form').classList.remove('hidden');
+            document.getElementById('join-room-form').classList.add('hidden');
+        } else {
+            document.getElementById('create-room-form').classList.add('hidden');
+            document.getElementById('join-room-form').classList.remove('hidden');
+        }
+    }
+
+    async createRoom() {
+        this.roomId = Utils.generateRoomId();
+        const roomName = document.getElementById('room-name').value || 'غرفة آمنة';
+        
+        document.getElementById('display-room-name').textContent = roomName;
+        document.getElementById('modal-room-id').textContent = this.roomId;
+        
+        const inviteUrl = `${window.location.origin}${window.location.pathname}?room=${this.roomId}`;
+        document.getElementById('invite-link').value = inviteUrl;
+        
+        // Generate QR Code
+        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(inviteUrl)}`;
+        document.getElementById('qr-code-img').src = qrUrl;
+        
+        await this.enterRoom(true);
+        
+        // Show invite modal
+        setTimeout(() => {
+            document.getElementById('invite-modal').classList.add('active');
+        }, 500);
+    }
+
+    async joinRoom() {
+        this.roomId = document.getElementById('join-room-id').value.trim();
+        if (!this.roomId) {
+            this.showToast('الرجاء إدخال معرف الغرفة', 'error');
+            return;
+        }
+        
+        document.getElementById('display-room-name').textContent = `غرفة: ${this.roomId}`;
+        await this.enterRoom(false);    }
+
+    async enterRoom(isInitiator) {
+        document.getElementById('landing-view').classList.add('hidden');
+        document.getElementById('room-view').classList.remove('hidden');
+        document.getElementById('connection-overlay').classList.remove('hidden');
+        
+        try {
+            // Initialize media
+            await this.webrtc.initLocalMedia(false);
+            
+            // Create peer connection
+            this.webrtc.createPeerConnection(isInitiator);
+            
+            // Setup callbacks
+            this.webrtc.onConnectionChange = (state) => {
+                console.log('Connection state:', state);
+                document.getElementById('connection-info').textContent = `الحالة: ${state}`;
+                
+                if (state === 'connected') {
+                    document.getElementById('connection-overlay').classList.add('hidden');
+                    document.getElementById('waiting-overlay').classList.add('hidden');
+                    document.getElementById('quality-badge').textContent = 'متصل';
+                    this.startSessionTimer();
+                    this.showToast('تم الاتصال بنجاح', 'success');
+                } else if (state === 'disconnected' || state === 'failed') {
+                    this.showToast('انقطع الاتصال', 'error');
+                }
+            };
+            
+            this.webrtc.onTrack = (stream) => {
+                const mainVideo = document.getElementById('main-video');
+                if (mainVideo.srcObject !== stream) {
+                    mainVideo.srcObject = stream;
+                }
+            };
+            
+            // Setup Firebase listeners
+            this.setupFirebaseListeners(isInitiator);
+            
+            if (isInitiator) {
+                // Create offer and send to Firebase
+                const offer = await this.webrtc.createOffer();
+                
+                this.roomRef = db.ref(`rooms/${this.roomId}`);
+                await this.roomRef.set({
+                    offer: {
+                        type: 'offer',
+                        sdp: offer,
+                        sender: this.userId,                        timestamp: firebase.database.ServerValue.TIMESTAMP
+                    },
+                    createdAt: firebase.database.ServerValue.TIMESTAMP
+                });
+                
+                // Show waiting overlay
+                document.getElementById('waiting-overlay').classList.remove('hidden');
+                document.getElementById('connection-status').textContent = 'انتظار المشارك الآخر';
+                
+                // Listen for answer
+                this.roomRef.child('answer').on('value', async (snapshot) => {
+                    const answer = snapshot.val();
+                    if (answer && answer.sender !== this.userId) {
+                        await this.webrtc.setRemoteAnswer(answer.sdp);
+                        document.getElementById('waiting-overlay').classList.add('hidden');
+                    }
+                });
+                
+            } else {
+                // Joiner: wait for offer, then create answer
+                document.getElementById('connection-status').textContent = 'جاري الاتصال بالغرفة...';
+                
+                this.roomRef = db.ref(`rooms/${this.roomId}`);
+                this.roomRef.child('offer').on('value', async (snapshot) => {
+                    const offer = snapshot.val();
+                    if (offer && offer.sender !== this.userId) {
+                        document.getElementById('connection-status').textContent = 'جاري إنشاء الاتصال...';
+                        const answer = await this.webrtc.setRemoteOffer(offer.sdp);
+                        
+                        await this.roomRef.child('answer').set({
+                            type: 'answer',
+                            sdp: answer,
+                            sender: this.userId,
+                            timestamp: firebase.database.ServerValue.TIMESTAMP
+                        });
+                    }
+                });
+            }
+            
+        } catch (err) {
+            console.error('Enter room error:', err);
+            this.showToast('فشل في بدء الغرفة: ' + err.message, 'error');
+            this.leaveRoom();
+        }
+    }
+
+    setupFirebaseListeners(isInitiator) {
+        // Listen for ICE candidates
+        this.candidatesListener = db.ref(`rooms/${this.roomId}/candidates`).on('child_added', async (snapshot) => {
+            const candidate = snapshot.val();            if (candidate.sender !== this.userId) {
+                await this.webrtc.addCandidate(candidate.candidate);
+            }
+        });
+    }
+
+    async toggleScreenShare() {
+        const btn = document.getElementById('btn-screen');
+        
+        if (!this.isScreenSharing) {
+            // Check if mobile
+            if (Utils.isMobile()) {
+                if (Utils.isIOS()) {
+                    this.showToast('iOS لا يدعم مشاركة الشاشة. استخدم الكاميرا بدلاً من ذلك', 'warning');
+                    return;
+                }
+            }
+            
+            const stream = await this.webrtc.startScreenShare();
+            if (stream) {
+                this.isScreenSharing = true;
+                btn.classList.add('active');
+                
+                // Replace video track
+                await this.webrtc.replaceTrack(stream, 'video');
+                
+                // Show in local preview
+                const localPreview = document.getElementById('local-preview');
+                const localVideo = document.getElementById('local-video');
+                localVideo.srcObject = stream;
+                localPreview.classList.remove('hidden');
+                
+                this.showToast('بدأت مشاركة الشاشة', 'success');
+            }
+        } else {
+            this.webrtc.stopScreenShare();
+            this.isScreenSharing = false;
+            btn.classList.remove('active');
+            
+            document.getElementById('local-preview').classList.add('hidden');
+            
+            // Remove video track
+            const sender = this.webrtc.pc.getSenders().find(s => s.track && s.track.kind === 'video');
+            if (sender) {
+                await sender.replaceTrack(null);
+            }
+            
+            this.showToast('توقفت مشاركة الشاشة', 'warning');
+        }
+    }
+    async toggleCamera() {
+        const btn = document.getElementById('btn-camera');
+        
+        if (!this.isCameraOn) {
+            const stream = await this.webrtc.startCamera();
+            if (stream) {
+                this.isCameraOn = true;
+                btn.classList.add('active');
+                
+                // Replace video track
+                await this.webrtc.replaceTrack(stream, 'video');
+                
+                // Show in local preview
+                const localPreview = document.getElementById('local-preview');
+                const localVideo = document.getElementById('local-video');
+                localVideo.srcObject = stream;
+                localPreview.classList.remove('hidden');
+                
+                this.showToast('تم تشغيل الكاميرا', 'success');
+            }
+        } else {
+            this.webrtc.stopCamera();
+            this.isCameraOn = false;
+            btn.classList.remove('active');
+            
+            document.getElementById('local-preview').classList.add('hidden');
+            
+            // Remove video track
+            const sender = this.webrtc.pc.getSenders().find(s => s.track && s.track.kind === 'video');
+            if (sender) {
+                await sender.replaceTrack(null);
+            }
+            
+            this.showToast('تم إيقاف الكاميرا', 'warning');
+        }
+    }
+
+    toggleMic() {
+        this.isMicMuted = !this.isMicMuted;
+        const btn = document.getElementById('btn-mic');
+        
+        if (this.webrtc.localStream) {
+            this.webrtc.localStream.getAudioTracks().forEach(track => {
+                track.enabled = !this.isMicMuted;
+            });
+        }
+        
+        if (this.isMicMuted) {
+            btn.classList.add('danger');            btn.innerHTML = '<svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" stroke-dasharray="1 1"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"/></svg>';
+            this.showToast('تم كتم الميكروفون', 'warning');
+        } else {
+            btn.classList.remove('danger');
+            btn.innerHTML = '<svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>';
+            this.showToast('تم تشغيل الميكروفون', 'success');
+        }
+    }
+
+    toggleFullscreen() {
+        const stage = document.getElementById('video-stage');
+        if (!document.fullscreenElement) {
+            stage.requestFullscreen().catch(err => {
+                this.showToast(`خطأ: ${err.message}`, 'error');
+            });
+        } else {
+            document.exitFullscreen();
+        }
+    }
+
+    toggleSidebar() {
+        document.getElementById('info-modal').classList.add('active');
+    }
+
+    startSessionTimer() {
+        this.sessionStartTime = Date.now();
+        this.timerInterval = setInterval(() => {
+            const elapsed = Math.floor((Date.now() - this.sessionStartTime) / 1000);
+            document.getElementById('session-timer').textContent = Utils.formatTime(elapsed);
+        }, 1000);
+    }
+
+    leaveRoom() {
+        if (this.timerInterval) clearInterval(this.timerInterval);
+        
+        // Cleanup Firebase
+        if (this.roomRef) {
+            if (this.candidatesListener) {
+                db.ref(`rooms/${this.roomId}/candidates`).off('child_added', this.candidatesListener);
+            }
+            this.roomRef.off();
+            this.roomRef.remove();
+        }
+        
+        // Cleanup WebRTC
+        this.webrtc.cleanup();
+        
+        // Reset UI
+        document.getElementById('room-view').classList.add('hidden');
+        document.getElementById('landing-view').classList.remove('hidden');        document.getElementById('main-video').srcObject = null;
+        document.getElementById('local-video').srcObject = null;
+        
+        this.roomId = null;
+        this.isScreenSharing = false;
+        this.isCameraOn = false;
+        this.isMicMuted = false;
+    }
+
+    showToast(message, type = 'info') {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        
+        const icons = {
+            success: '<svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--success);"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>',
+            error: '<svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--danger);"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>',
+            warning: '<svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--warning);"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>'
+        };
+        
+        toast.innerHTML = `${icons[type] || icons.info}<span>${message}</span>`;
+        container.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateX(100%)';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+
+    closeModal(id) {
+        document.getElementById(id).classList.remove('active');
+    }
+
+    copyInviteLink() {
+        Utils.copyToClipboard(document.getElementById('invite-link').value);
+    }
+}
+
+// Initialize App
+const app = new App();
+</script>
+
+</body>
+</html>
